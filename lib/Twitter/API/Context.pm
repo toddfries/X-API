@@ -32,10 +32,20 @@ my $limit = sub {
     my $res = $self->http_response;
     $res->header("X-Rate-Limit-$which");
 };
+my $ulimit = sub {
+    my ( $self, $which ) = @_;
+
+    my $res = $self->http_response;
+    $res->header("X-User-Limit-24hour-$which");
+};
 
 sub rate_limit           { shift->$limit('Limit') }
 sub rate_limit_remaining { shift->$limit('Remaining') }
 sub rate_limit_reset     { shift->$limit('Reset') }
+
+sub user_limit           { shift->$ulimit('Limit') }
+sub user_limit_remaining { shift->$ulimit('Remaining') }
+sub user_limit_reset     { shift->$ulimit('Reset') }
 
 sub set_header {
     my ( $self, $header, $value ) = @_;

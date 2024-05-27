@@ -79,7 +79,7 @@ has default_headers => (
             user_agent               => $agent,
             x_twitter_client         => $agent,
             x_twitter_client_version => $VERSION,
-            x_twitter_client_url     => 'https://github.com/semifor/Twitter-API',
+            x_twitter_client_url     => 'https://github.com/toddfries/Twitter-API',
         };
     },
 );
