@@ -1,4 +1,4 @@
-package Twitter::API;
+package X::API;
 # ABSTRACT: A Twitter REST API library for Perl
 
 our $VERSION = '1.0006';
@@ -13,15 +13,15 @@ use JSON::MaybeXS ();
 use Module::Runtime qw/use_module/;
 use Ref::Util qw/is_arrayref is_ref/;
 use Try::Tiny;
-use Twitter::API::Context;
-use Twitter::API::Error;
+use X::API::Context;
+use X::API::Error;
 use URI;
 use URL::Encode ();
 use WWW::OAuth;
 use namespace::clean;
 
 with qw/MooX::Traits/;
-sub _trait_namespace { 'Twitter::API::Trait' }
+sub _trait_namespace { 'X::API::Trait' }
 
 has api_version => (
     is      => 'ro',
@@ -51,12 +51,12 @@ after clear_access_token => sub {
 
 has api_url => (
     is      => 'ro',
-    default => sub { 'https://api.twitter.com' },
+    default => sub { 'https://api.x.com' },
 );
 
 has upload_url => (
     is      => 'ro',
-    default => sub { 'https://upload.twitter.com' },
+    default => sub { 'https://upload.x.com' },
 );
 
 has agent => (
@@ -126,7 +126,7 @@ sub post { shift->request( post => @_ ) }
 sub request {
     my $self = shift;
 
-    my $c = Twitter::API::Context->new({
+    my $c = X::API::Context->new({
         http_method => uc shift,
         url         => shift,
         args        => shift || {},
@@ -145,7 +145,7 @@ sub request {
     $self->prepare_request($c);
     $self->add_authorization($c);
 
-    # Allow early exit for things like Twitter::API::AnyEvent
+    # Allow early exit for things like X::API::AnyEvent
     $c->set_http_response($self->send_request($c) // return $c);
 
     $self->inflate_response($c);
@@ -364,7 +364,7 @@ sub encode_args_string {
 sub uri_escape { URL::Encode::url_encode_utf8($_[1]) }
 
 sub process_error_response {
-    Twitter::API::Error->throw({ context => $_[1] });
+    X::API::Error->throw({ context => $_[1] });
 }
 
 sub api_url_for {
@@ -469,8 +469,8 @@ __END__
 
     ### Common usage ###
 
-    use Twitter::API;
-    my $client = Twitter::API->new_with_traits(
+    use X::API;
+    my $client = X::API->new_with_traits(
         traits              => 'Enchilada',
         consumer_key        => $YOUR_CONSUMER_KEY,
         consumer_secret     => $YOUR_CONSUMER_SECRET,
@@ -481,7 +481,7 @@ __END__
     my $me   = $client->verify_credentials;
     my $user = $client->show_user('twitter');
 
-    # In list context, both the Twitter API result and a Twitter::API::Context
+    # In list context, both the Twitter API result and a X::API::Context
     # object are returned.
     my ($r, $context) = $client->home_timeline({ count => 200, trim_user => 1 });
     my $remaning = $context->rate_limit_remaining;
@@ -490,7 +490,7 @@ __END__
 
     ### No frills ###
 
-    my $client = Twitter::API->new(
+    my $client = X::API->new(
         consumer_key    => $YOUR_CONSUMER_KEY,
         consumer_secret => $YOUR_CONSUMER_SECRET,
     );
@@ -502,7 +502,7 @@ __END__
 
     ### Error handling ###
 
-    use Twitter::API::Util 'is_twitter_api_error';
+    use X::API::Util 'is_twitter_api_error';
     use Try::Tiny;
 
     try {
@@ -525,7 +525,7 @@ __END__
 
 =head1 DESCRIPTION
 
-Twitter::API provides an interface to the Twitter REST API for perl.
+X::API provides an interface to the Twitter REST API for perl.
 
 Features:
 
@@ -540,64 +540,64 @@ Additional features are available via optional traits:
 
 =for :list
 * convenient methods for API endpoints with simplified argument handling via
-  L<ApiMethods|Twitter::API::Trait::ApiMethods>
+  L<ApiMethods|X::API::Trait::ApiMethods>
 * normalized booleans (Twitter likes 'true' and 'false', except when it
-  doesn't) via L<NormalizeBooleans|Twitter::API::Trait::NormalizeBooleans>
+  doesn't) via L<NormalizeBooleans|X::API::Trait::NormalizeBooleans>
 * automatic decoding of HTML entities via
-  L<DecodeHtmlEntities|Twitter::API::Trait::DecodeHtmlEntities>
+  L<DecodeHtmlEntities|X::API::Trait::DecodeHtmlEntities>
 * automatic retry on transient errors via
-  L<RetryOnError|Twitter::API::Trait::RetryOnError>
+  L<RetryOnError|X::API::Trait::RetryOnError>
 * "the whole enchilada" combines all the above traits via
-  L<Enchilada|Twitter::API::Trait::Enchilada>
-* app-only (OAuth2) support via L<AppAuth|Twitter::API::Trait::AppAuth>
-* automatic rate limiting via L<RateLimiting|Twitter::API::Trait::RateLimiting>
+  L<Enchilada|X::API::Trait::Enchilada>
+* app-only (OAuth2) support via L<AppAuth|X::API::Trait::AppAuth>
+* automatic rate limiting via L<RateLimiting|X::API::Trait::RateLimiting>
 
 Some features are provided by separate distributions to avoid additional
 dependencies most users won't want or need:
 
 =for :list
-* async support via subclass L<Twitter::API::AnyEvent|https://github.com/semifor/Twitter-API-AnyEvent>
-* inflate API call results to objects via L<Twitter::API::Trait::InflateObjects|https://github.com/semifor/Twitter-API-Trait-InflateObjects>
+* async support via subclass L<X::API::AnyEvent|https://github.com/semifor/Twitter-API-AnyEvent>
+* inflate API call results to objects via L<X::API::Trait::InflateObjects|https://github.com/semifor/Twitter-API-Trait-InflateObjects>
 
 =head1 OVERVIEW
 
-=head2 Migration from Net::Twitter and Net::Twitter::Lite
+=head2 Migration from Net::Twitter and Net::X::Lite
 
 Migration support is included to assist users migrating from L<Net::Twitter>
-and L<Net::Twitter::Lite>. It will be removed from a future release. See
-L<Migration|Twitter::API::Trait::Migration> for details about migrating your
+and L<Net::X::Lite>. It will be removed from a future release. See
+L<Migration|X::API::Trait::Migration> for details about migrating your
 existing Net::Twitter/::Lite applications.
 
 =head2 Normal usage
 
-Normally, you will construct a Twitter::API client with some traits, primarily
+Normally, you will construct a X::API client with some traits, primarily
 B<ApiMethods>. It provides methods for each known Twitter API endpoint.
 Documentation is provided for each of those methods in
-L<ApiMethods|Twitter::API::Trait::ApiMethods>.
+L<ApiMethods|X::API::Trait::ApiMethods>.
 
 See the list of traits in the L</DESCRIPTION> and refer to the documentation
 for each.
 
 =head2 Minimalist usage
 
-Without any traits, Twitter::API provides access to API endpoints with the
+Without any traits, X::API provides access to API endpoints with the
 L<get|get-url-args> and L<post|post-url-args> methods described below, as well
 as methods for managing OAuth authentication. API results are simply perl data
 structures decoded from the JSON responses. Refer to the L<Twitter API
-Documentation|https://dev.twitter.com/rest/public> for available endpoints,
+Documentation|https://dev.x.com/rest/public> for available endpoints,
 parameters, and responses.
 
 =head2 Twitter API V2 Beta Support
 
 Twitter intends to replace the current public API, version 1.1, with version 2.
 
-See L<https://developer.twitter.com/en/docs/twitter-api/early-access>.
+See L<https://developer.x.com/en/docs/twitter-api/early-access>.
 
-You can use Twitter::API for the V2 beta with the minimalist usage described
+You can use X::API for the V2 beta with the minimalist usage described
 just above by passing values in the constructor for C<api_version> and
 C<api_ext>.
 
-    my $client = Twitter::API->new_with_traits(
+    my $client = X::API->new_with_traits(
         api_version => '2',
         api_ext     => '',
         %oauth_credentials,
@@ -614,17 +614,17 @@ Required. Every application has it's own application credentials.
 =attr access_token, access_token_secret
 
 Optional. If provided, every API call will be authenticated with these user
-credentials. See L<AppAuth|Twitter::API::Trait::AppAuth> for app-only (OAuth2)
+credentials. See L<AppAuth|X::API::Trait::AppAuth> for app-only (OAuth2)
 support, which does not require user credentials. You can also pass options
 C<-token> and C<-token_secret> to specify user credentials on each API call.
 
 =attr api_url
 
-Optional. Defaults to C<https://api.twitter.com>.
+Optional. Defaults to C<https://api.x.com>.
 
 =attr upload_url
 
-Optional. Defaults to C<https://upload.twitter.com>.
+Optional. Defaults to C<https://upload.x.com>.
 
 =attr api_version
 
@@ -648,7 +648,7 @@ Optional. Request timeout in seconds. Defaults to C<10>.
 Issues an HTTP GET request to Twitter. If C<$url> is just a path part, e.g.,
 C<account/verify_credentials>, it will be expanded to a full URL by prepending
 the C<api_url>, C<api_version> and appending C<.json>. A full URL can also be
-specified, e.g. C<https://api.twitter.com/1.1/account/verify_credentials.json>.
+specified, e.g. C<https://api.x.com/1.1/account/verify_credentials.json>.
 
 This should accommodate any new API endpoints Twitter adds without requiring an
 update to this module.
@@ -667,7 +667,7 @@ applications will pass a callback URL.
 
 Returns a hashref that includes C<oauth_token> and C<oauth_token_secret>.
 
-See L<https://developer.twitter.com/en/docs/basics/authentication/api-reference/request_token>.
+See L<https://developer.x.com/en/docs/basics/authentication/api-reference/request_token>.
 
 =method oauth_authentication_url(\%args)
 
@@ -676,14 +676,14 @@ C<oauth_token>. Use the value returned by C<get_request_token>. Optional
 arguments: C<force_login> and C<screen_name> to pre-fill Twitter's
 authentication form.
 
-See L<https://developer.twitter.com/en/docs/basics/authentication/api-reference/authenticate>.
+See L<https://developer.x.com/en/docs/basics/authentication/api-reference/authenticate>.
 
 =method oauth_authorization_url(\%args)
 
 Identical to C<oauth_authentication_url>, but uses authorization flow, rather
 than authentication flow.
 
-See L<https://developer.twitter.com/en/docs/basics/authentication/api-reference/authorize>.
+See L<https://developer.x.com/en/docs/basics/authentication/api-reference/authorize>.
 
 =method oauth_access_token(\%ags)
 
@@ -693,7 +693,7 @@ and either the PIN number if you used C<oob> for the callback value in
 C<get_request_token> or the C<verifier> parameter returned in the web callback,
 as C<verfier>.
 
-See L<https://developer.twitter.com/en/docs/basics/authentication/api-reference/access_token>.
+See L<https://developer.x.com/en/docs/basics/authentication/api-reference/access_token>.
 
 =method xauth(\%args)
 
@@ -704,9 +704,10 @@ C<password>.
 
 =for :list
 * L<API::Twitter> - Twitter.com API Client
-* L<AnyEvent::Twitter::Stream> - Receive Twitter streaming API in an event loop
+* L<AnyEvent::X::Stream> - Receive Twitter streaming API in an event loop
 * L<AnyEvent::Twitter> - A thin wrapper for Twitter API using OAuth
 * L<Mojo::WebService::Twitter> - Simple Twitter API client
-* L<Net::Twitter> - Twitter::API's predecessor (also L<Net::Twitter::Lite>)
+* L<Net::Twitter> - X::API's predecessor (also L<Net::X::Lite>)
+* L<Twitter::API> - X::API's recent ancestor.
 
 =cut

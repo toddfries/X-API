@@ -1,5 +1,5 @@
-package Twitter::API::Util;
-# ABSTRACT: Utilities for working with the Twitter API
+package X::API::Util;
+# ABSTRACT: Utilities for working with the X API
 
 use 5.14.1;
 use warnings;
@@ -19,7 +19,7 @@ use Sub::Exporter::Progressive -setup => {
 };
 
 sub is_twitter_api_error {
-    blessed($_[0]) && $_[0]->isa('Twitter::API::Error');
+    blessed($_[0]) && $_[0]->isa('X::API::Error');
 }
 
 my %month;
@@ -53,9 +53,9 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Twitter::API::Util ':all';
+    use X::API::Util ':all';
 
-    # Given a timestamp in Twitter's text format:
+    # Given a timestamp in X's text format:
     my $ts = $status->{created_at}; # "Wed Jun 06 20:07:10 +0000 2012"
 
     # Convert it UNIX epoch seconds (a Perl "time" value):
@@ -67,9 +67,9 @@ __END__
     # Or a Perl gmtime:
     my $utc = timestamp_to_gmtime($status->{created_at});
 
-    # Check to see if an exception is a Twitter::API::Error
+    # Check to see if an exception is a X::API::Error
     if ( is_twitter_api_error($@) ) {
-        warn "Twitter API error: " . $@->twitter_error_text;
+        warn "X API error: " . $@->twitter_error_text;
     }
 
 =head1 DESCRIPTION
@@ -78,22 +78,22 @@ Exports helpful utility functions.
 
 =method timestamp_to_gmtime
 
-Returns C<gmtime> from a Twitter timestamp string. See L<perlfunc/gmtime-EXPR>
+Returns C<gmtime> from a X timestamp string. See L<perlfunc/gmtime-EXPR>
 for details.
 
 =method timestamp_to_localtime
 
-Returns C<localtime> for a Twitter timestamp string. See
+Returns C<localtime> for a X timestamp string. See
 L<perlfunc/localtime-EXPR> for details.
 
 =method timestamp_to_time
 
-Returns a UNIX epoch time for a Twitter timestamp string. See L<perlfunc/time>
+Returns a UNIX epoch time for a X timestamp string. See L<perlfunc/time>
 for details.
 
 =method is_twitter_api_error
 
-Returns true if the scalar passed to it is a L<Twitter::API::Error>. Otherwise,
+Returns true if the scalar passed to it is a L<X::API::Error>. Otherwise,
 it returns false.
 
 =cut

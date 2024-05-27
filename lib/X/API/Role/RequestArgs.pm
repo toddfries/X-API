@@ -1,4 +1,4 @@
-package Twitter::API::Role::RequestArgs;
+package X::API::Role::RequestArgs;
 # ABSTRACT: API request method helpers
 
 use 5.14.1;
@@ -113,7 +113,7 @@ Helper method for C<request_with_pos_args>. Takes the same arguments described i
 C<request_with_pos_args> above, and returns a list of arguments ready for a
 call to C<request>.
 
-Individual methods in L<Twitter::API::Trait::ApiMethods> use
+Individual methods in L<X::API::Trait::ApiMethods> use
 C<normalize_pos_args> if they need to do further processing on the args hashref
 before calling C<request>.
 
@@ -166,7 +166,7 @@ sub normalize_pos_args {
 
 =method flatten_list_args([ $key | \@keys ], \%args)
 
-Some Twitter API arguments take a list of values as a string of comma separated
+Some X API arguments take a list of values as a string of comma separated
 items. To allow callers to pass an array reference of items instead, this
 method is used to flatten array references to strings. The key or keys identify
 which values to flatten in the C<\%args> hash reference, if they exist.
@@ -200,9 +200,9 @@ __END__
 
 Then, in your application code:
 
-    use Twitter::API;
+    use X::API;
 
-    my $client = Twitter::API->new_with_traits(
+    my $client = X::API->new_with_traits(
         traits => '+MyApiMethods',
         %othe_new_options,
     );
@@ -216,7 +216,7 @@ Then, in your application code:
 
 =head1 DESCRIPTION
 
-Helper methods for implementers of custom traits for creating concise Twitter
-API methods. Used in L<Twitter::API::Trait::ApiMethods>.
+Helper methods for implementers of custom traits for creating concise X
+API methods. Used in L<X::API::Trait::ApiMethods>.
 
 =cut

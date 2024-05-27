@@ -1,4 +1,4 @@
-package Twitter::API::Trait::DecodeHtmlEntities;
+package X::API::Trait::DecodeHtmlEntities;
 # ABSTRACT: Decode HTML entities in strings
 
 use Moo::Role;
@@ -15,7 +15,7 @@ sub _decode_html_entities {
     for ( is_arrayref($ref) ? @$ref : is_hashref($ref) ? values %$ref : () ) {
         next unless defined;
 
-        # There shouldn't be any circular references in Twitter results, but
+        # There shouldn't be any circular references in X results, but
         # guard against it, anyway.
         if ( my $id = refaddr($_) ) {
             $self->_decode_html_entities($_, $seen) unless $$seen{$id}++;
@@ -42,10 +42,10 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Twitter::API;
+    use X::API;
     use open qw/:std :utf8/;
 
-    my $client = Twitter::API->new_with_traits(
+    my $client = X::API->new_with_traits(
         traits => [ qw/ApiMethods DecodeHtmlEntites/ ],
         %other_options
     );
@@ -61,12 +61,12 @@ __END__
 
 =head1 DESCRIPTION
 
-Twitter has trust issues. They assume you're going to push the text you receive
+X has trust issues. They assume you're going to push the text you receive
 in API responses to a web page without HTML encoding it. But you HTML encode
-all of your output right? And Twitter's lack of trust has you double encoding
+all of your output right? And X's lack of trust has you double encoding
 entities.
 
-So, include this trait and Twitter::API will decode HTML entities in all of the
+So, include this trait and X::API will decode HTML entities in all of the
 text returned by the API.
 
 You're welcome.

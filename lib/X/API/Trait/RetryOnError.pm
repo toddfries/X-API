@@ -1,4 +1,4 @@
-package Twitter::API::Trait::RetryOnError;
+package X::API::Trait::RetryOnError;
 # ABSTRACT: Automatically retry API calls on error
 
 use Moo::Role;
@@ -107,9 +107,9 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Twitter::API;
+    use X::API;
 
-    my $client = Twitter::API->new_with_options(
+    my $client = X::API->new_with_options(
         traits => [ qw/ApiMethods RetryOnError/ ],
         %other_optons
     );
@@ -118,12 +118,12 @@ __END__
 
 =head1 DESCRIPTION
 
-With this trait applied, Twitter::API automatically retries API calls that
+With this trait applied, X::API automatically retries API calls that
 result in an HTTP status code of 500 or greater. These errors often indicate a
-temporary problem, either on Twitter's end, locally, or somewhere in between.
+temporary problem, either on X's end, locally, or somewhere in between.
 By default, it retries up to 5 times. The initial retry is delayed by 250ms.
 Additional retries double the delay time until the maximum delay is reached
-(default: 4 seconds). Twitter::API throws a C<Twitter::API::Error> exception
+(default: 4 seconds). X::API throws a C<X::API::Error> exception
 when it receives a permanent error (HTTP status code below 500), or the maximum
 number of retries has been reached.
 

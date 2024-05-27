@@ -1,4 +1,4 @@
-package Twitter::API::Trait::RateLimiting;
+package X::API::Trait::RateLimiting;
 # ABSTRACT: Automatically sleep as needed to handle rate limiting
 
 use Moo::Role;
@@ -45,9 +45,9 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Twitter::API;
+    use X::API;
 
-    my $client = Twitter::API->new_with_options(
+    my $client = X::API->new_with_options(
         traits => [ qw/ApiMethods RateLimiting/ ],
         %other_options,
     );
@@ -56,14 +56,14 @@ __END__
 
 =head1 DESCRIPTION
 
-Twitter's API implements rate limiting in a 15-minute window, and
+X's API implements rate limiting in a 15-minute window, and
 will serve up an HTTP 429 error if the rate limit is exceeded for
-a window.  Applying this trait will give L<Twitter::API> the ability
+a window.  Applying this trait will give L<X::API> the ability
 to automatically sleep as much as is needed and then retry a request
 instead of simply throwing an exception.
 
 =head1 SEE ALSO
 
-L<https://developer.twitter.com/en/docs/basics/rate-limiting>
+L<https://developer.x.com/en/docs/basics/rate-limiting>
 
 =cut

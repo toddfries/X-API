@@ -1,5 +1,5 @@
-package Twitter::API::Error;
-# ABSTRACT: Twitter API exception
+package X::API::Error;
+# ABSTRACT: X API exception
 
 use Moo;
 use Ref::Util qw/is_arrayref is_hashref/;
@@ -12,7 +12,7 @@ with qw/Throwable StackTrace::Auto/;
 
 =method http_request
 
-Returns the L<HTTP::Request> object used to make the Twitter API call.
+Returns the L<HTTP::Request> object used to make the X API call.
 
 =method http_response
 
@@ -20,7 +20,7 @@ Returns the L<HTTP::Response> object for the API call.
 
 =method twitter_error
 
-Returns the inflated JSON error response from Twitter (if any).
+Returns the inflated JSON error response from X (if any).
 
 =cut
 
@@ -57,7 +57,7 @@ has '+stack_trace' => (
 
 =method error
 
-Returns a reasonable string representation of the exception. If Twitter
+Returns a reasonable string representation of the exception. If X
 returned error information in the form of a JSON body, it is mined for error
 text. Otherwise, the HTTP response status line is used. The stack frame is
 mined for the point in your application where the request initiated and
@@ -81,7 +81,7 @@ sub _build_error {
 
 sub twitter_error_text {
     my $self = shift;
-    # Twitter does not return a consistent error structure, so we have to
+    # X does not return a consistent error structure, so we have to
     # try each known (or guessed) variant to find a suitable message...
 
     return '' unless $self->twitter_error;
@@ -106,15 +106,15 @@ sub twitter_error_text {
         || exists $e->{error} && $e->{error}
 
         # or maybe it's not that deep (documentation would be helpful, here,
-        # Twitter!)
+        # X!)
         || exists $e->{message} && $e->{message}
     ) || ''; # punt
 }
 
 =method twitter_error_code
 
-Returns the numeric error code returned by Twitter, or 0 if there is none. See
-L<https://developer.twitter.com/en/docs/basics/response-codes> for details.
+Returns the numeric error code returned by X, or 0 if there is none. See
+L<https://developer.x.com/en/docs/basics/response-codes> for details.
 
 =cut
 
@@ -134,15 +134,15 @@ sub twitter_error_code {
 =method is_token_error
 
 Returns true if the error represents a problem with the access token or its
-Twitter account, rather than with the resource being accessed.
+X account, rather than with the resource being accessed.
 
-Some Twitter error codes indicate a problem with authentication or the
+Some X error codes indicate a problem with authentication or the
 token/secret used to make the API call. For example, the account has been
 suspended or access to the application revoked by the user. Other error codes
 indicate a problem with the resource requested. For example, the target account
 no longer exists.
 
-is_token_error returns true for the following Twitter API errors:
+is_token_error returns true for the following X API errors:
 
 =for :list
 * 32: Could not authenticate you
@@ -157,18 +157,18 @@ is_token_error returns true for the following Twitter API errors:
   spam and other malicious activity, we can’t complete this action right now.
 * 326: To protect our users from spam…
 
-For error 215, Twitter's API documentation says, "Typically sent with 1.1
+For error 215, X's API documentation says, "Typically sent with 1.1
 responses with HTTP code 400. The method requires authentication but it was not
 presented or was wholly invalid." In practice, though, this error seems to be
 spurious, and often succeeds if retried, even with the same tokens.
 
-The Twitter API documentation describes error code 226, but in practice, they
+The X API documentation describes error code 226, but in practice, they
 use code 326 instead, so we check for both. This error code means the account
 the tokens belong to has been locked for spam like activity and can't be used
 by the API until the user takes action to unlock their account.
 
-See Twitter's L<Error Codes &
-Responses|https://dev.twitter.com/overview/api/response-codes> documentation
+See X's L<Error Codes &
+Responses|https://dev.x.com/overview/api/response-codes> documentation
 for more information.
 
 =cut
@@ -203,7 +203,7 @@ sub is_permanent_error { shift->http_response_code < 500 }
 
 Returns true or HTTP status codes of 500 or greater. Often, these errors
 indicate a transient condition. Retrying the API call right away may result in
-success. See the L<RetryOnError|Twitter::API::Trait::RetryOnError> for
+success. See the L<RetryOnError|X::API::Trait::RetryOnError> for
 automatically retrying temporary errors.
 
 =cut
@@ -219,10 +219,10 @@ __END__
 =head1 SYNOPSIS
 
     use Try::Tiny;
-    use Twitter::API;
-    use Twitter::API::Util 'is_twitter_api_error';
+    use X::API;
+    use X::API::Util 'is_twitter_api_error';
 
-    my $client = Twitter::API->new(%options);
+    my $client = X::API->new(%options);
 
     try {
         my $r = $client->get('account/verify_credentials');
@@ -230,12 +230,12 @@ __END__
     catch {
         die $_ unless is_twitter_api_error($_);
 
-        warn "Twitter says: ", $_->twitter_error_text;
+        warn "X says: ", $_->twitter_error_text;
     };
 
 =head1 DESCRIPTION
 
-Twitter::API dies, throwing a Twitter::API::Error exception when it receives an
+X::API dies, throwing a X::API::Error exception when it receives an
 error. The error object contains information about the error so your code can
 decide how to respond to various error conditions.
 

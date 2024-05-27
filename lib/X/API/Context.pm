@@ -1,4 +1,4 @@
-package Twitter::API::Context;
+package X::API::Context;
 # ABSTRACT: Encapsulated state for a request/response
 
 use Moo;
@@ -78,7 +78,7 @@ value in list context. The context includes the L<HTTP::Request> and
 L<HTTP::Response> objects, a reference to the API return data, and accessor for
 rate limit information.
 
-A reference to the context is also included in a L<Twitter::API::Error>
+A reference to the context is also included in a L<X::API::Error>
 exception.
 
 =method http_request
@@ -97,7 +97,7 @@ Returns the result data for the API call.
 
 Every API endpoint has a rate limit. This method returns the rate limit for the
 endpoint of the API call. See
-L<https://developer.twitter.com/en/docs/basics/rate-limiting> for details.
+L<https://developer.x.com/en/docs/basics/rate-limiting> for details.
 
 =method rate_limit_remaining
 

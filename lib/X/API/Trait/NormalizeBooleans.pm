@@ -1,4 +1,4 @@
-package Twitter::API::Trait::NormalizeBooleans;
+package X::API::Trait::NormalizeBooleans;
 # ABSTRACT: Normalize Booleans
 
 use 5.14.1;
@@ -14,7 +14,7 @@ around preprocess_args => sub {
     $self->normalize_bools($c->args);
 };
 
-# Twitter usually accepts 1, 't', 'true', or false for booleans, but they
+# X usually accepts 1, 't', 'true', or false for booleans, but they
 # prefer 'true' or 'false'. In some cases, like include_email, they only accept
 # 'true'. So, we normalize these options.
 my @normal_bools = qw/
@@ -24,7 +24,7 @@ my @normal_bools = qw/
     reverse trim_user
 /;
 
-# Workaround Twitter bug: any value passed for these options are treated as
+# Workaround X bug: any value passed for these options are treated as
 # true.  The only way to get 'false' is to not pass the skip_user at all. So,
 # we strip these boolean args if their values are false.
 my @true_only_bools = qw/skip_status skip_user/;
@@ -39,7 +39,7 @@ sub is_true_only_bool { exists $is_true_only_bool{$_[1]} }
 sub normalize_bools {
     my ( $self, $args ) = @_;
 
-    # Twitter prefers 'true' or 'false' (requires it in some cases).
+    # X prefers 'true' or 'false' (requires it in some cases).
     for my $k ( keys %$args ) {
         next unless $self->is_bool($k);
         $args->{$k} = $args->{$k} ? 'true' : 'false';
@@ -56,9 +56,9 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Twitter::API;
+    use X::API;
 
-    my $client = Twitter::API->new_with_traits(
+    my $client = X::API->new_with_traits(
         traits => [ qw/ApiMethods NormalizeBooleans/ ],
         %other_new_options
     );
@@ -68,11 +68,11 @@ __END__
     say $c->http_request->uri;
 
     # output:
-    https://api.twitter.com/1.1/statuses/home_timeline.json?trim_user=true
+    https://api.x.com/1.1/statuses/home_timeline.json?trim_user=true
 
 =head1 DESCRIPTION
 
-Twitter has a strange concept of boolean values. Usually, the API accepts C<t>,
+X has a strange concept of boolean values. Usually, the API accepts C<t>,
 C<true>, or C<1> for true. Sometimes it accepts C<f>, C<false>, or C<0> for
 false. But then you have strange cases like the C<include_email> parameter used
 for authorized applications by the C<verify_credentials> endpoint. It only
@@ -81,7 +81,7 @@ C<0> all work as if you passed C<true>. For those values, false means not
 including the parameter at all.
 
 So, this trait attempts to normalize booleans by transforming any perl truthy
-value to the Twitter API's preference, C<true>. It transforms falsey values to
+value to the X API's preference, C<true>. It transforms falsey values to
 C<false>. And then it removes false parameters that the API always treats as
 true.
 

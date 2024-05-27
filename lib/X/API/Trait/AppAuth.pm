@@ -1,4 +1,4 @@
-package Twitter::API::Trait::AppAuth;
+package X::API::Trait::AppAuth;
 # ABSTRACT: App-only (OAuth2) Authentication
 
 use Moo::Role;
@@ -31,10 +31,10 @@ my $add_consumer_auth_header = sub {
 =method oauth2_token
 
 Call the C<oauth2/token> endpoint to get a bearer token. The token is not
-stored in Twitter::API's state. If you want that, set the C<access_token>
+stored in X::API's state. If you want that, set the C<access_token>
 attribute with the returned token.
 
-See L<https://developer.twitter.com/en/docs/basics/authentication/api-reference/token> for details.
+See L<https://developer.x.com/en/docs/basics/authentication/api-reference/token> for details.
 
 =cut
 
@@ -46,7 +46,7 @@ sub oauth2_token {
         grant_type => 'client_credentials',
     });
 
-    # In their wisdom, Twitter sends us a URL encoded token. We need to decode
+    # In their wisdom, X sends us a URL encoded token. We need to decode
     # it, so if/when we call invalidate_token, and properly URL encode our
     # parameters, we don't end up with a double-encoded token.
     my $token = url_decode $$r{access_token};
@@ -56,7 +56,7 @@ sub oauth2_token {
 =method invalidate_token($token)
 
 Calls the C<oauth2/invalidate_token> endpoint to revoke a token. See
-L<https://developer.twitter.com/en/docs/basics/authentication/api-reference/invalidate_token> for
+L<https://developer.x.com/en/docs/basics/authentication/api-reference/invalidate_token> for
 details.
 
 =cut
@@ -97,8 +97,8 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Twitter::API;
-    my $client = Twitter::API->new_with_traits(
+    use X::API;
+    my $client = X::API->new_with_traits(
         traits => [ qw/ApiMethods AppAuth/ ]);
 
     my $r = $client->oauth2_token;

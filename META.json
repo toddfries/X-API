@@ -1,5 +1,5 @@
 {
-   "abstract" : "A Twitter REST API library for Perl",
+   "abstract" : "A X REST API library for Perl",
    "author" : [
       "Marc Mims <marc@questright.com>"
    ],
@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "Twitter-API",
+   "name" : "X-API",
    "no_index" : {
       "directory" : [
          "eg",
@@ -82,69 +82,69 @@
       }
    },
    "provides" : {
-      "Twitter::API" : {
-         "file" : "lib/Twitter/API.pm",
+      "X::API" : {
+         "file" : "lib/X/API.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Context" : {
-         "file" : "lib/Twitter/API/Context.pm",
+      "X::API::Context" : {
+         "file" : "lib/X/API/Context.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Error" : {
-         "file" : "lib/Twitter/API/Error.pm",
+      "X::API::Error" : {
+         "file" : "lib/X/API/Error.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Role::RequestArgs" : {
-         "file" : "lib/Twitter/API/Role/RequestArgs.pm",
+      "X::API::Role::RequestArgs" : {
+         "file" : "lib/X/API/Role/RequestArgs.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::ApiMethods" : {
-         "file" : "lib/Twitter/API/Trait/ApiMethods.pm",
+      "X::API::Trait::ApiMethods" : {
+         "file" : "lib/X/API/Trait/ApiMethods.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::AppAuth" : {
-         "file" : "lib/Twitter/API/Trait/AppAuth.pm",
+      "X::API::Trait::AppAuth" : {
+         "file" : "lib/X/API/Trait/AppAuth.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::DecodeHtmlEntities" : {
-         "file" : "lib/Twitter/API/Trait/DecodeHtmlEntities.pm",
+      "X::API::Trait::DecodeHtmlEntities" : {
+         "file" : "lib/X/API/Trait/DecodeHtmlEntities.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::Enchilada" : {
-         "file" : "lib/Twitter/API/Trait/Enchilada.pm",
+      "X::API::Trait::Enchilada" : {
+         "file" : "lib/X/API/Trait/Enchilada.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::Migration" : {
-         "file" : "lib/Twitter/API/Trait/Migration.pm",
+      "X::API::Trait::Migration" : {
+         "file" : "lib/X/API/Trait/Migration.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::NormalizeBooleans" : {
-         "file" : "lib/Twitter/API/Trait/NormalizeBooleans.pm",
+      "X::API::Trait::NormalizeBooleans" : {
+         "file" : "lib/X/API/Trait/NormalizeBooleans.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::RateLimiting" : {
-         "file" : "lib/Twitter/API/Trait/RateLimiting.pm",
+      "X::API::Trait::RateLimiting" : {
+         "file" : "lib/X/API/Trait/RateLimiting.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Trait::RetryOnError" : {
-         "file" : "lib/Twitter/API/Trait/RetryOnError.pm",
+      "X::API::Trait::RetryOnError" : {
+         "file" : "lib/X/API/Trait/RetryOnError.pm",
          "version" : "1.0006"
       },
-      "Twitter::API::Util" : {
-         "file" : "lib/Twitter/API/Util.pm",
+      "X::API::Util" : {
+         "file" : "lib/X/API/Util.pm",
          "version" : "1.0006"
       }
    },
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/semifor/Twitter-API/issues"
+         "web" : "https://github.com/toddfries/X-API/issues"
       },
-      "homepage" : "https://github.com/semifor/Twitter-API",
+      "homepage" : "https://github.com/toddfries/X-API",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/semifor/Twitter-API.git",
-         "web" : "https://github.com/semifor/Twitter-API"
+         "url" : "https://github.com/toddfries/X-API.git",
+         "web" : "https://github.com/toddfries/X-API"
       },
       "x_IRC" : "irc://irc.perl.org/#net-twitter"
    },

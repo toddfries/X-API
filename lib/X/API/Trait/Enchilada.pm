@@ -1,4 +1,4 @@
-package Twitter::API::Trait::Enchilada;
+package X::API::Trait::Enchilada;
 # ABSTRACT: Sometimes you want the whole enchilada
 
 use Moo::Role;
@@ -22,9 +22,9 @@ __END__
 
 =head1 SYNOPSIS
 
-    use Twitter::API;
+    use X::API;
 
-    my $client = Twitter::API->new_with_traits(
+    my $client = X::API->new_with_traits(
         traits => 'Enchilada',
         %other_new_options
     );
@@ -36,9 +36,9 @@ This is just a shortcut for applying commonly used traits. Because, sometimes, y
 This role simply bundles the following traits. See those modules for details.
 
 =for :list
-* L<ApiMethods|Twitter::API::Trait::ApiMethods>
-* L<NormalizeBooleans|Twitter::API::Trait::NormalizeBooleans>
-* L<RetryOnError|Twitter::API::Trait::RetryOnError>
-* L<DecodeHtmlEntites|Twitter::API::Trait::DecodeHtmlEntities>
+* L<ApiMethods|X::API::Trait::ApiMethods>
+* L<NormalizeBooleans|X::API::Trait::NormalizeBooleans>
+* L<RetryOnError|X::API::Trait::RetryOnError>
+* L<DecodeHtmlEntites|X::API::Trait::DecodeHtmlEntities>
 
 =cut
