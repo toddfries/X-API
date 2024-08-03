@@ -1,5 +1,5 @@
 package X::API;
-# ABSTRACT: A Twitter REST API library for Perl
+# ABSTRACT: An X REST API library for Perl
 
 our $VERSION = '1.0006';
 use 5.14.1;
@@ -77,9 +77,9 @@ has default_headers => (
         my $agent = shift->agent;
         {
             user_agent               => $agent,
-            x_twitter_client         => $agent,
-            x_twitter_client_version => $VERSION,
-            x_twitter_client_url     => 'https://github.com/toddfries/Twitter-API',
+            x_X_client         => $agent,
+            x_X_client_version => $VERSION,
+            x_X_client_url     => 'https://github.com/toddfries/X-API',
         };
     },
 );
@@ -315,11 +315,11 @@ sub inflate_response {
         }
         elsif ( ($c->get_option('accept') // '') eq 'application/x-www-form-urlencoded' ) {
 
-            # Twitter sets Content-Type: text/html for /oauth/request_token and
+            # X sets Content-Type: text/html for /oauth/request_token and
             # /oauth/access_token even though they return url encoded form
             # data. So we'll decode based on what we expected when we set the
             # Accept header. We don't want to assume form data when we didn't
-            # request it, because sometimes twitter returns 200 OK with actual
+            # request it, because sometimes X returns 200 OK with actual
             # HTML content. We don't want to decode and return that. It's an
             # error. We'll just leave $data unset if we don't have a reasonable
             # expectation of the content type.
@@ -502,14 +502,14 @@ __END__
 
     ### Error handling ###
 
-    use X::API::Util 'is_twitter_api_error';
+    use X::API::Util 'is_X_api_error';
     use Try::Tiny;
 
     try {
         my $r = $client->verify_credentials;
     }
     catch {
-        die $_ unless is_twitter_api_error($_);
+        die $_ unless is_X_api_error($_);
 
         # The error object includes plenty of information
         say $_->http_request->as_string;
@@ -518,7 +518,7 @@ __END__
         if ( $_->is_token_error ) {
             say "There's something wrong with this token."
         }
-        if ( $_->twitter_error_code == 326 ) {
+        if ( $_->X_error_code == 326 ) {
             say "Oops! Twitter thinks you're spam bot!";
         }
     };

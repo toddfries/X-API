@@ -107,7 +107,7 @@ __END__
     my $token = $r->{access_token};
 
     # you can use the token explicitly with the -token argument:
-    my $user = $client->show_user('twitter_api', { -token => $token });
+    my $user = $client->show_user('X_api', { -token => $token });
 
     # or you can set the access_token attribute to use it implicitly
     $client->access_token($token);

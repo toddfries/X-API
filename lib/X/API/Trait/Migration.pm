@@ -28,7 +28,7 @@ around request => sub {
 
     # Net::X/::Lite migraton support
     if ( $self->wrap_result ) {
-        unless ( $ENV{TWITTER_API_NO_MIGRATION_WARNINGS} ) {
+        unless ( $ENV{X_API_NO_MIGRATION_WARNINGS} ) {
             carp 'wrap_result is enabled. It will be removed in a future '
                 .'version. See X::API::Trait::Migration';
         }
@@ -95,7 +95,7 @@ for my $method ( qw/
     around $method => sub {
         my ( $next, $self ) = splice @_, 0, 2;
 
-        unless ( $ENV{TWITTER_API_NO_MIGRATION_WARNINGS} ) {
+        unless ( $ENV{X_API_NO_MIGRATION_WARNINGS} ) {
             carp $method.' will be removed in a future release. '
                 .'Please see X::API::Trait::Migration';
         }
@@ -196,7 +196,7 @@ with option C<< wrap_result => 1 >> and X::API will return the context
 object, only, for API calls. This should give you the same behavior you had
 with B<WrapResult> while you modify your code. X::API will warn when this
 option is used. You may disale warnings with
-C<$ENV{TWITTER_API_NO_MIGRATION_WARNINGS} = 1>.
+C<$ENV{X_API_NO_MIGRATION_WARNINGS} = 1>.
 
 If you are using any other Net::X traits, please contact the author of
 X::API.  Additional traits may be added to X::API or released as
@@ -250,7 +250,7 @@ unmodified while you make the transition.
 
 The following methods exist only for migration from Net::X and will be
 removed in a future release. A warning is issued on each call to these methods.
-To disable the warnings, set C<$ENV{TWITTER_API_NO_MIGRATION_WARNINGS} = 1>.
+To disable the warnings, set C<$ENV{X_API_NO_MIGRATION_WARNINGS} = 1>.
 
 =for :list
 * B<get_authentication_url>

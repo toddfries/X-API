@@ -11,14 +11,14 @@ use namespace::clean;
 
 use Sub::Exporter::Progressive -setup => {
     exports => [ qw/
-        is_twitter_api_error
+        is_X_api_error
         timestamp_to_gmtime
         timestamp_to_localtime
         timestamp_to_time
     /],
 };
 
-sub is_twitter_api_error {
+sub is_X_api_error {
     blessed($_[0]) && $_[0]->isa('X::API::Error');
 }
 
@@ -68,8 +68,8 @@ __END__
     my $utc = timestamp_to_gmtime($status->{created_at});
 
     # Check to see if an exception is a X::API::Error
-    if ( is_twitter_api_error($@) ) {
-        warn "X API error: " . $@->twitter_error_text;
+    if ( is_X_api_error($@) ) {
+        warn "X API error: " . $@->X_error_text;
     }
 
 =head1 DESCRIPTION
@@ -91,7 +91,7 @@ L<perlfunc/localtime-EXPR> for details.
 Returns a UNIX epoch time for a X timestamp string. See L<perlfunc/time>
 for details.
 
-=method is_twitter_api_error
+=method is_X_api_error
 
 Returns true if the scalar passed to it is a L<X::API::Error>. Otherwise,
 it returns false.

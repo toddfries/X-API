@@ -18,7 +18,7 @@ Returns the L<HTTP::Request> object used to make the X API call.
 
 Returns the L<HTTP::Response> object for the API call.
 
-=method twitter_error
+=method X_error
 
 Returns the inflated JSON error response from X (if any).
 
@@ -30,7 +30,7 @@ has context => (
     handles  => {
         http_request  => 'http_request',
         http_response => 'http_response',
-        twitter_error => 'result',
+        X_error => 'result',
     },
 );
 
@@ -74,18 +74,18 @@ has error => (
 sub _build_error {
     my $self = shift;
 
-    my $error = $self->twitter_error_text || $self->http_response->status_line;
+    my $error = $self->X_error_text || $self->http_response->status_line;
     my ( $location ) = $self->stack_frame(0)->as_string =~ /( at .*)/;
     return $error . ($location || '');
 }
 
-sub twitter_error_text {
+sub X_error_text {
     my $self = shift;
     # X does not return a consistent error structure, so we have to
     # try each known (or guessed) variant to find a suitable message...
 
-    return '' unless $self->twitter_error;
-    my $e = $self->twitter_error;
+    return '' unless $self->X_error;
+    my $e = $self->X_error;
 
     return is_hashref($e) && (
         # the newest variant: array of errors
@@ -111,17 +111,17 @@ sub twitter_error_text {
     ) || ''; # punt
 }
 
-=method twitter_error_code
+=method X_error_code
 
 Returns the numeric error code returned by X, or 0 if there is none. See
 L<https://developer.x.com/en/docs/basics/response-codes> for details.
 
 =cut
 
-sub twitter_error_code {
+sub X_error_code {
     my $self = shift;
 
-    for ( $self->twitter_error ) {
+    for ( $self->X_error ) {
         return is_hashref($_)
             && exists $_->{errors}
             && exists $_->{errors}[0]
@@ -177,7 +177,7 @@ use constant TOKEN_ERRORS => (32, 64, 88, 89, 99, 135, 136, 215, 226, 326);
 my %token_errors = map +($_ => undef), TOKEN_ERRORS;
 
 sub is_token_error {
-    exists $token_errors{shift->twitter_error_code};
+    exists $token_errors{shift->X_error_code};
 }
 
 =method http_response_code
@@ -220,7 +220,7 @@ __END__
 
     use Try::Tiny;
     use X::API;
-    use X::API::Util 'is_twitter_api_error';
+    use X::API::Util 'is_X_api_error';
 
     my $client = X::API->new(%options);
 
@@ -228,9 +228,9 @@ __END__
         my $r = $client->get('account/verify_credentials');
     }
     catch {
-        die $_ unless is_twitter_api_error($_);
+        die $_ unless is_X_api_error($_);
 
-        warn "X says: ", $_->twitter_error_text;
+        warn "X says: ", $_->X_error_text;
     };
 
 =head1 DESCRIPTION
