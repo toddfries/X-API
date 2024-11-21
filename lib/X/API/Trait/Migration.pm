@@ -19,15 +19,15 @@ has wrap_result => (
 );
 
 around request => sub {
-    my ( $next, $self ) = splice @_, 0, 2;
+    my ( $next, $me ) = splice @_, 0, 2;
 
-    my ( $r, $c ) = $self->$next(@_);
+    my ( $r, $c ) = $me->$next(@_);
 
     # Early exit? Actually just a context object; return it.
     return $r unless defined $c;
 
     # Net::X/::Lite migraton support
-    if ( $self->wrap_result ) {
+    if ( $me->wrap_result ) {
         unless ( $ENV{X_API_NO_MIGRATION_WARNINGS} ) {
             carp 'wrap_result is enabled. It will be removed in a future '
                 .'version. See X::API::Trait::Migration';
@@ -41,15 +41,15 @@ around request => sub {
 sub ua { shift->user_agent(@_) }
 
 sub _get_auth_url {
-    my ( $self, $endpoint ) = splice @_, 0, 2;
+    my ( $me, $endpoint ) = splice @_, 0, 2;
     my %args = @_ == 1 && is_ref($_[0]) ? %{ $_[0] } : @_;
 
     my $callback = delete $args{callback} // 'oob';
-    my ( $r, $c ) = $self->oauth_request_token(callback => $callback);
-    $self->request_token($$r{oauth_token});
-    $self->request_token_secret($$r{oauth_token_secret});
+    my ( $r, $c ) = $me->oauth_request_token(callback => $callback);
+    $me->request_token($$r{oauth_token});
+    $me->request_token_secret($$r{oauth_token_secret});
 
-    my $uri = $self->_auth_url($endpoint,
+    my $uri = $me->_auth_url($endpoint,
         oauth_token => $$r{oauth_token},
         %args
     );
@@ -60,25 +60,25 @@ sub get_authentication_url { shift->_get_auth_url(authenticate => @_) }
 sub get_authorization_url  { shift->_get_auth_url(authorize    => @_) }
 
 sub request_access_token {
-    my ( $self, %params ) = @_;
+    my ( $me, %params ) = @_;
 
     # request_access_token is defined in both Net::X's OAuth and AppAuth
     # traits. We need to know which one to call, here.
-    if ( $self->does('X::API::Trait::AppAuth') ) {
-        return $self->access_token($self->oauth2_token(@_));
+    if ( $me->does('X::API::Trait::AppAuth') ) {
+        return $me->access_token($me->oauth2_token(@_));
     }
 
-    my ( $r, $c ) = $self->oauth_access_token({
-        token        => $self->request_token,
-        token_secret => $self->request_token_secret,
+    my ( $r, $c ) = $me->oauth_access_token({
+        token        => $me->request_token,
+        token_secret => $me->request_token_secret,
         %params, # verifier => $verifier
     });
 
     # Net::X stores access tokens in the client instance
-    $self->access_token($$r{oauth_token});
-    $self->access_token_secret($$r{oauth_token_secret});
-    $self->clear_request_token;
-    $self->clear_request_token_secret;
+    $me->access_token($$r{oauth_token});
+    $me->access_token_secret($$r{oauth_token_secret});
+    $me->clear_request_token;
+    $me->clear_request_token_secret;
 
     return (
         @{$r}{qw/oauth_token oauth_token_secret user_id screen_name/},
@@ -93,13 +93,13 @@ for my $method ( qw/
     ua
 /) {
     around $method => sub {
-        my ( $next, $self ) = splice @_, 0, 2;
+        my ( $next, $me ) = splice @_, 0, 2;
 
         unless ( $ENV{X_API_NO_MIGRATION_WARNINGS} ) {
             carp $method.' will be removed in a future release. '
                 .'Please see X::API::Trait::Migration';
         }
-        $self->$next(@_);
+        $me->$next(@_);
     };
 }
 

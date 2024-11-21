@@ -23,15 +23,15 @@ has rate_limit_sleep_code => (
 
 around send_request => sub {
     my $orig = shift;
-    my $self = shift;
+    my $me = shift;
 
-    my $res = $self->$orig(@_);
+    my $res = $me->$orig(@_);
 
     while($res->code == HTTP_TOO_MANY_REQUESTS) {
         my $sleep_time = $res->header('x-rate-limit-reset') - time;
-        $self->rate_limit_sleep_code->($sleep_time);
+        $me->rate_limit_sleep_code->($sleep_time);
 
-        $res = $self->$orig(@_);
+        $res = $me->$orig(@_);
     }
 
     return $res;

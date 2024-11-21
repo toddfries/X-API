@@ -27,15 +27,15 @@ sub delete_option { delete $_[0]->options->{$_[1]} }
 
 # private method
 my $limit = sub {
-    my ( $self, $which ) = @_;
+    my ( $me, $which ) = @_;
 
-    my $res = $self->http_response;
+    my $res = $me->http_response;
     $res->header("X-Rate-Limit-$which");
 };
 my $ulimit = sub {
-    my ( $self, $which ) = @_;
+    my ( $me, $which ) = @_;
 
-    my $res = $self->http_response;
+    my $res = $me->http_response;
     $res->header("X-User-Limit-24hour-$which");
 };
 
@@ -48,9 +48,9 @@ sub user_limit_remaining { shift->$ulimit('Remaining') }
 sub user_limit_reset     { shift->$ulimit('Reset') }
 
 sub set_header {
-    my ( $self, $header, $value ) = @_;
+    my ( $me, $header, $value ) = @_;
 
-    $self->headers->{$header} = $value;
+    $me->headers->{$header} = $value;
 }
 
 1;

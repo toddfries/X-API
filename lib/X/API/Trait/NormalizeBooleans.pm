@@ -8,10 +8,10 @@ use namespace::clean;
 requires 'preprocess_args';
 
 around preprocess_args => sub {
-    my ( $next, $self, $c ) = @_;
+    my ( $next, $me, $c ) = @_;
 
-    $self->$next($c);
-    $self->normalize_bools($c->args);
+    $me->$next($c);
+    $me->normalize_bools($c->args);
 };
 
 # X usually accepts 1, 't', 'true', or false for booleans, but they
@@ -37,13 +37,13 @@ sub is_bool { exists $is_bool{$_[1]} }
 sub is_true_only_bool { exists $is_true_only_bool{$_[1]} }
 
 sub normalize_bools {
-    my ( $self, $args ) = @_;
+    my ( $me, $args ) = @_;
 
     # X prefers 'true' or 'false' (requires it in some cases).
     for my $k ( keys %$args ) {
-        next unless $self->is_bool($k);
+        next unless $me->is_bool($k);
         $args->{$k} = $args->{$k} ? 'true' : 'false';
-        delete $args->{$k} if $self->is_true_only_bool($k)
+        delete $args->{$k} if $me->is_true_only_bool($k)
             && $args->{$k} eq 'false';
     }
 }

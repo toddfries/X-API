@@ -72,20 +72,20 @@ has error => (
 );
 
 sub _build_error {
-    my $self = shift;
+    my $me = shift;
 
-    my $error = $self->X_error_text || $self->http_response->status_line;
-    my ( $location ) = $self->stack_frame(0)->as_string =~ /( at .*)/;
+    my $error = $me->X_error_text || $me->http_response->status_line;
+    my ( $location ) = $me->stack_frame(0)->as_string =~ /( at .*)/;
     return $error . ($location || '');
 }
 
 sub X_error_text {
-    my $self = shift;
+    my $me = shift;
     # X does not return a consistent error structure, so we have to
     # try each known (or guessed) variant to find a suitable message...
 
-    return '' unless $self->X_error;
-    my $e = $self->X_error;
+    return '' unless $me->X_error;
+    my $e = $me->X_error;
 
     return is_hashref($e) && (
         # the newest variant: array of errors
@@ -119,9 +119,9 @@ L<https://developer.x.com/en/docs/basics/response-codes> for details.
 =cut
 
 sub X_error_code {
-    my $self = shift;
+    my $me = shift;
 
-    for ( $self->X_error ) {
+    for ( $me->X_error ) {
         return is_hashref($_)
             && exists $_->{errors}
             && exists $_->{errors}[0]

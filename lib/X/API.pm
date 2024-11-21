@@ -88,12 +88,12 @@ has user_agent => (
     is      => 'ro',
     lazy    => 1,
     default => sub {
-        my $self = shift;
+        my $me = shift;
 
         use_module 'HTTP::Thin';
         HTTP::Thin->new(
-            timeout => $self->timeout,
-            agent   => $self->agent,
+            timeout => $me->timeout,
+            agent   => $me->agent,
         );
     },
     handles => {
@@ -124,7 +124,7 @@ sub get  { shift->request( get => @_ ) }
 sub post { shift->request( post => @_ ) }
 
 sub request {
-    my $self = shift;
+    my $me = shift;
 
     my $c = X::API::Context->new({
         http_method => uc shift,
@@ -132,28 +132,28 @@ sub request {
         args        => shift || {},
         # shallow copy so we don't spoil the defaults
         headers     => {
-            %{ $self->default_headers },
+            %{ $me->default_headers },
             accept       => 'application/json',
             content_type => 'application/json;charset=utf8',
         },
         extra_args  => \@_,
     });
 
-    $self->extract_options($c);
-    $self->preprocess_args($c);
-    $self->preprocess_url($c);
-    $self->prepare_request($c);
-    $self->add_authorization($c);
+    $me->extract_options($c);
+    $me->preprocess_args($c);
+    $me->preprocess_url($c);
+    $me->prepare_request($c);
+    $me->add_authorization($c);
 
     # Allow early exit for things like X::API::AnyEvent
-    $c->set_http_response($self->send_request($c) // return $c);
+    $c->set_http_response($me->send_request($c) // return $c);
 
-    $self->inflate_response($c);
+    $me->inflate_response($c);
     return wantarray ? ( $c->result, $c ) : $c->result;
 }
 
 sub extract_options {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     my $args = $c->args;
     for ( keys %$args ) {
@@ -162,10 +162,10 @@ sub extract_options {
 }
 
 sub preprocess_args {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     if ( $c->http_method eq 'GET' ) {
-        $self->flatten_array_args($c->args);
+        $me->flatten_array_args($c->args);
     }
 
     # If any of the args are arrayrefs, we'll infer it's multipart/form-data
@@ -174,16 +174,16 @@ sub preprocess_args {
 }
 
 sub preprocess_url {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     my $url = $c->url;
     my $args = $c->args;
     $url =~ s[:(\w+)][delete $$args{$1} // croak "missing arg $1"]eg;
-    $c->set_url($self->api_url_for($url));
+    $c->set_url($me->api_url_for($url));
 }
 
 sub prepare_request {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     # possibly override Accept header
     $c->set_header(accept => $c->get_option('accept'))
@@ -192,10 +192,10 @@ sub prepare_request {
     # dispatch on HTTP method
     my $http_method = $c->http_method;
     my $prepare_method = join '_', 'mk', lc($http_method), 'request';
-    my $dispatch = $self->can($prepare_method)
+    my $dispatch = $me->can($prepare_method)
         || croak "unexpected HTTP method: $http_method";
 
-    my $req = $self->$dispatch($c);
+    my $req = $me->$dispatch($c);
     $c->set_http_request($req);
 }
 
@@ -208,21 +208,21 @@ sub mk_delete_request {
 }
 
 sub mk_post_request {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     if ( $c->get_option('multipart_form_data') ) {
-        return $self->mk_multipart_post($c);
+        return $me->mk_multipart_post($c);
     }
 
     if ( $c->has_option('to_json') ) {
-        return $self->mk_json_post($c);
+        return $me->mk_json_post($c);
     }
 
-    return $self->mk_form_urlencoded_post($c);
+    return $me->mk_form_urlencoded_post($c);
 }
 
 sub mk_multipart_post {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     $c->set_header(content_type => 'multipart/form-data;charset=utf-8');
     POST $c->url,
@@ -233,28 +233,28 @@ sub mk_multipart_post {
 }
 
 sub mk_json_post {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     POST $c->url,
         %{ $c->headers },
-        Content => $self->to_json($c->get_option('to_json'));
+        Content => $me->to_json($c->get_option('to_json'));
 }
 
 sub mk_form_urlencoded_post {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     $c->set_header(
         content_type => 'application/x-www-form-urlencoded;charset=utf-8');
     POST $c->url,
         %{ $c->headers },
-        Content => $self->encode_args_string($c->args);
+        Content => $me->encode_args_string($c->args);
 }
 
 sub mk_simple_request {
-    my ( $self, $http_method, $c ) = @_;
+    my ( $me, $http_method, $c ) = @_;
 
     my $uri = URI->new($c->url);
-    if ( my $encoded = $self->encode_args_string($c->args) ) {
+    if ( my $encoded = $me->encode_args_string($c->args) ) {
         $uri->query($encoded);
     }
 
@@ -265,13 +265,13 @@ sub mk_simple_request {
 }
 
 sub add_authorization {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     my $req = $c->http_request;
 
     my %cred = (
-        client_id     => $self->consumer_key,
-        client_secret => $self->consumer_secret,
+        client_id     => $me->consumer_key,
+        client_secret => $me->consumer_secret,
     );
 
     my %oauth;
@@ -284,10 +284,10 @@ sub add_authorization {
     else {
         # protected request; requires tokens
         $cred{token} = $c->get_option('token')
-            // $self->access_token
+            // $me->access_token
             // croak 'requires an oauth token';
         $cred{token_secret} = $c->get_option('token_secret')
-            // $self->access_token_secret
+            // $me->access_token_secret
             // croak 'requires an oauth token secret';
     }
 
@@ -295,19 +295,19 @@ sub add_authorization {
 }
 
 around send_request => sub {
-    my ( $orig, $self, $c ) = @_;
+    my ( $orig, $me, $c ) = @_;
 
-    $self->$orig($c->http_request);
+    $me->$orig($c->http_request);
 };
 
 sub inflate_response {
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     my $res = $c->http_response;
     my $data;
     try {
         if ( $res->content_type eq 'application/json' ) {
-            $data = $self->from_json($res->content);
+            $data = $me->from_json($res->content);
         }
         elsif ( ( $res->content_length // 0 ) == 0 ) {
             # E.g., 200 OK from media/metadata/create
@@ -337,11 +337,11 @@ sub inflate_response {
     $c->set_result($data);
     return if defined($data) && $res->is_success;
 
-    $self->process_error_response($c);
+    $me->process_error_response($c);
 }
 
 sub flatten_array_args {
-    my ( $self, $args ) = @_;
+    my ( $me, $args ) = @_;
 
     # transform arrays to comma delimited strings
     for my $k ( keys %$args ) {
@@ -351,11 +351,11 @@ sub flatten_array_args {
 }
 
 sub encode_args_string {
-    my ( $self, $args ) = @_;
+    my ( $me, $args ) = @_;
 
     my @pairs;
     for my $k ( sort keys %$args ) {
-        push @pairs, join '=', map $self->uri_escape($_), $k, $$args{$k};
+        push @pairs, join '=', map $me->uri_escape($_), $k, $$args{$k};
     }
 
     join '&', @pairs;
@@ -368,25 +368,25 @@ sub process_error_response {
 }
 
 sub api_url_for {
-    my $self = shift;
+    my $me = shift;
 
-    $self->_url_for($self->api_ext, $self->api_url, $self->api_version, @_);
+    $me->_url_for($me->api_ext, $me->api_url, $me->api_version, @_);
 }
 
 sub upload_url_for {
-    my $self = shift;
+    my $me = shift;
 
-    $self->_url_for($self->api_ext, $self->upload_url, $self->api_version, @_);
+    $me->_url_for($me->api_ext, $me->upload_url, $me->api_version, @_);
 }
 
 sub oauth_url_for {
-    my $self = shift;
+    my $me = shift;
 
-    $self->_url_for('', $self->api_url, 'oauth', @_);
+    $me->_url_for('', $me->api_url, 'oauth', @_);
 }
 
 sub _url_for {
-    my ( $self, $ext, @parts ) = @_;
+    my ( $me, $ext, @parts ) = @_;
 
     # If we already have a fully qualified URL, just return it
     return $_[-1] if $_[-1] =~ m(^https?://);
@@ -400,12 +400,12 @@ sub _url_for {
 # OAuth handshake
 
 sub oauth_request_token {
-    my $self = shift;
+    my $me = shift;
     my %args = @_ == 1 && is_ref($_[0]) ? %{ $_[0] } : @_;
 
     my %oauth_args;
     $oauth_args{oauth_callback} = delete $args{callback} // 'oob';
-    return $self->request(post => $self->oauth_url_for('request_token'), {
+    return $me->request(post => $me->oauth_url_for('request_token'), {
         -accept     => 'application/x-www-form-urlencoded',
         -oauth_args => \%oauth_args,
         %args, # i.e. ( x_auth_access_type => 'read' )
@@ -413,10 +413,10 @@ sub oauth_request_token {
 }
 
 sub _auth_url {
-    my ( $self, $endpoint ) = splice @_, 0, 2;
+    my ( $me, $endpoint ) = splice @_, 0, 2;
     my %args = @_ == 1 && is_ref($_[0]) ? %{ $_[0] } : @_;
 
-    my $uri = URI->new($self->oauth_url_for($endpoint));
+    my $uri = URI->new($me->oauth_url_for($endpoint));
     $uri->query_form(%args);
     return $uri;
 };
@@ -425,24 +425,24 @@ sub oauth_authentication_url { shift->_auth_url(authenticate => @_) }
 sub oauth_authorization_url  { shift->_auth_url(authorize    => @_) }
 
 sub oauth_access_token {
-    my $self = shift;
+    my $me = shift;
     my %args = @_ == 1 && is_ref($_[0]) ? %{ $_[0] } : @_;
 
     # We'll take 'em with or without the oauth_ prefix :)
     my %oauth_args;
     @oauth_args{map s/^(?!oauth_)/oauth_/r, keys %args} = values %args;
 
-    $self->request(post => $self->oauth_url_for('access_token'), {
+    $me->request(post => $me->oauth_url_for('access_token'), {
         -accept     => 'application/x-www-form-urlencoded',
         -oauth_args => \%oauth_args,
     });
 }
 
 sub xauth {
-    my ( $self, $username, $password ) = splice @_, 0, 3;
+    my ( $me, $username, $password ) = splice @_, 0, 3;
     my %extra_args = @_ == 1 && is_ref($_[0]) ? %{ $_[0] } : @_;
 
-    $self->request(post => $self->oauth_url_for('access_token'), {
+    $me->request(post => $me->oauth_url_for('access_token'), {
         -accept     => 'application/x-www-form-urlencoded',
         -oauth_args => {},
         x_auth_mode     => 'client_auth',

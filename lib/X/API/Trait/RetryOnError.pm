@@ -70,29 +70,29 @@ has retry_delay_code => (
 
 around send_request => sub {
     my $orig = shift;
-    my $self = shift;
+    my $me = shift;
     my ( $c ) = @_;
 
     my $msg = $c->http_request;
     my $is_oauth = ( $msg->header('authorization') // '' ) =~ /^OAuth /;
 
-    my $delay = $self->initial_retry_delay;
-    my $retries = $self->max_retries;
+    my $delay = $me->initial_retry_delay;
+    my $retries = $me->max_retries;
     my $res;
     while () {
-        $res = $self->$orig(@_);
+        $res = $me->$orig(@_);
 
         # return on success or permanent error
         return $res if $res->code < 500 || $retries-- == 0;
 
-        $self->retry_delay_code->($delay);
-        $delay *= $self->retry_delay_multiplier;
-        $delay  = $self->max_retry_delay if $delay > $self->max_retry_delay;
+        $me->retry_delay_code->($delay);
+        $delay *= $me->retry_delay_multiplier;
+        $delay  = $me->max_retry_delay if $delay > $me->max_retry_delay;
 
         # If this is an OAuth request, we need a new Authorization header
         # (the nonce may be invalid, now).
         if ( $is_oauth ) {
-            $self->add_authorization($c);
+            $me->add_authorization($c);
         }
     }
 

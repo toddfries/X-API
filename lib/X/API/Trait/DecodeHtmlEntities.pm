@@ -8,7 +8,7 @@ use Ref::Util qw/is_arrayref is_hashref is_ref/;
 use namespace::clean;
 
 sub _decode_html_entities {
-    my ( $self, $ref, $seen ) = @_;
+    my ( $me, $ref, $seen ) = @_;
     $seen //= {};
 
     # Recursively walk data structure; decode entities is place on strings
@@ -18,7 +18,7 @@ sub _decode_html_entities {
         # There shouldn't be any circular references in X results, but
         # guard against it, anyway.
         if ( my $id = refaddr($_) ) {
-            $self->_decode_html_entities($_, $seen) unless $$seen{$id}++;
+            $me->_decode_html_entities($_, $seen) unless $$seen{$id}++;
         }
         else {
             # decode in place; happily, numbers remain untouched, no PV created
@@ -28,10 +28,10 @@ sub _decode_html_entities {
 }
 
 around inflate_response => sub {
-    my ( $orig, $self, $c ) = @_;
+    my ( $orig, $me, $c ) = @_;
 
-    $self->$orig($c);
-    $self->_decode_html_entities($c->result);
+    $me->$orig($c);
+    $me->_decode_html_entities($c->result);
 };
 
 1;

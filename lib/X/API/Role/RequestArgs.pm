@@ -24,21 +24,21 @@ C<user_id>, request_with_id croaks.
 
 Examples:
 
-    $self->request_with_id(get => 'some/endpoint', 'foo');
+    $me->request_with_id(get => 'some/endpoint', 'foo');
     # is transformed to:
-    $self->request(get => 'some/endpoint', { screen_name => 'foo' });
+    $me->request(get => 'some/endpoint', { screen_name => 'foo' });
 
-    $self->request_with_id(get => 'some/endpoint', 8575429);
+    $me->request_with_id(get => 'some/endpoint', 8575429);
     # is transformed to:
-    $self->request(get => 'some/endpoint', { user_id => 8675429 });
+    $me->request(get => 'some/endpoint', { user_id => 8675429 });
 
-    $self->request_with_id(get => 'some/endpoint', {
+    $me->request_with_id(get => 'some/endpoint', {
         screen_name => 'semifor',
     });
     # is transformed to:
-    $self->request(get => 'some/endpoint', { screen_name => 'semifor' });
+    $me->request(get => 'some/endpoint', { screen_name => 'semifor' });
 
-    $self->request_with_id(get => 'some/endpoint', {
+    $me->request_with_id(get => 'some/endpoint', {
         foo => 'bar',
     }); ### croaks ###
 
@@ -69,32 +69,32 @@ transformed to C<screen_name>.
 
 Examples:
 
-    $self->request_with_pos_args(
+    $me->request_with_pos_args(
         [ 'id', 'name' ], get => 'some/endpoint',
         '007', 'Bond'
     );
     # is transformed to:
-    $self->request(get => 'some/endpoint', {
+    $me->request(get => 'some/endpoint', {
         id   => '007',
         name => 'Bond',
     });
 
-    $self->request_with_pos_args(
+    $me->request_with_pos_args(
         [ 'id', 'name' ], get => 'some/endpoint',
         '007', { name => 'Bond' }
     );
     # is also transformed to:
-    $self->request(get => 'some/endpoint', {
+    $me->request(get => 'some/endpoint', {
         id   => '007',
         name => 'Bond',
     });
 
-    $self->request_with_pos_args(
+    $me->request_with_pos_args(
         [ ':ID', 'status' ], get => 'some/endpoint',
         'alice', 'down the rabbit hole'
     );
     # is transformed to:
-    $self->request(get => 'some/endpoint', {
+    $me->request(get => 'some/endpoint', {
         sreen_name => 'alice',
         status     => 'down the rabbit hole',
     });
@@ -102,9 +102,9 @@ Examples:
 =cut
 
 sub request_with_pos_args {
-    my $self = shift;
+    my $me = shift;
 
-    $self->request($self->normalize_pos_args(@_));
+    $me->request($me->normalize_pos_args(@_));
 }
 
 =method normalize_pos_args
@@ -120,7 +120,7 @@ before calling C<request>.
 =cut
 
 sub normalize_pos_args {
-    my $self        = shift;
+    my $me        = shift;
     my @pos_names   = shift;
     my $http_method = shift;
     my $path        = shift;
@@ -174,7 +174,7 @@ which values to flatten in the C<\%args> hash reference, if they exist.
 =cut
 
 sub flatten_list_args {
-    my ( $self, $keys, $args ) = @_;
+    my ( $me, $keys, $args ) = @_;
 
     for my $key ( is_arrayref($keys) ? @$keys : $keys ) {
         if ( my $value = $args->{$key} ) {

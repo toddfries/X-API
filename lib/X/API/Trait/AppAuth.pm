@@ -14,16 +14,16 @@ requires qw/
 # private methods
 
 sub oauth2_url_for {
-    my $self = shift;
+    my $me = shift;
 
-    $self->_url_for('', $self->api_url, 'oauth2', @_);
+    $me->_url_for('', $me->api_url, 'oauth2', @_);
 }
 
 my $add_consumer_auth_header = sub {
-    my ( $self, $req ) = @_;
+    my ( $me, $req ) = @_;
 
     $req->headers->authorization_basic(
-        $self->consumer_key, $self->consumer_secret);
+        $me->consumer_key, $me->consumer_secret);
 };
 
 # public methods
@@ -39,9 +39,9 @@ See L<https://developer.x.com/en/docs/basics/authentication/api-reference/token>
 =cut
 
 sub oauth2_token {
-    my $self = shift;
+    my $me = shift;
 
-    my ( $r, $c ) = $self->request(post => $self->oauth2_url_for('token'), {
+    my ( $r, $c ) = $me->request(post => $me->oauth2_url_for('token'), {
         -add_consumer_auth_header => 1,
         grant_type => 'client_credentials',
     });
@@ -62,10 +62,10 @@ details.
 =cut
 
 sub invalidate_token {
-    my ( $self, $token ) = @_;
+    my ( $me, $token ) = @_;
 
-    my ( $r, $c ) = $self->request(
-        post =>$self->oauth2_url_for('invalidate_token'), {
+    my ( $r, $c ) = $me->request(
+        post =>$me->oauth2_url_for('invalidate_token'), {
             -add_consumer_auth_header => 1,
             access_token              => $token,
     });
@@ -77,14 +77,14 @@ sub invalidate_token {
 
 around add_authorization => sub {
     shift; # we're overriding the base, so we won't call it
-    my ( $self, $c ) = @_;
+    my ( $me, $c ) = @_;
 
     my $req = $c->http_request;
     if ( $c->get_option('add_consumer_auth_header') ) {
-        $self->$add_consumer_auth_header($req);
+        $me->$add_consumer_auth_header($req);
     }
     else {
-        my $token = $c->get_option('token') // $self->access_token // return;
+        my $token = $c->get_option('token') // $me->access_token // return;
         $req->header(authorization => join ' ', Bearer => url_encode($token));
     }
 };

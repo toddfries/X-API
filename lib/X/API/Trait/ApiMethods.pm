@@ -589,7 +589,7 @@ L<https://developer.x.com/en/docs/trends/locations-with-trending-topics/api-refe
 =cut
 
 sub trends_available {
-    my ( $self, $args ) = @_;
+    my ( $me, $args ) = @_;
 
     goto &trends_closest if exists $$args{lat} || exists $$args{long};
 
@@ -625,7 +625,7 @@ L<https://developer.x.com/en/docs/accounts-and-users/follow-search-get-users/api
 
 # Net::X compatibility - rename category to slug
 my $rename_category = sub {
-    my $self = shift;
+    my $me = shift;
 
     my $args = is_hashref($_[-1]) ? pop : {};
     $args->{slug} = delete $args->{category} if exists $args->{category};
@@ -633,10 +633,10 @@ my $rename_category = sub {
 };
 
 sub user_suggestions {
-    my $self = shift;
+    my $me = shift;
 
-    $self->request_with_pos_args(slug => get => 'users/suggestions/:slug/members',
-        $self->$rename_category(@_));
+    $me->request_with_pos_args(slug => get => 'users/suggestions/:slug/members',
+        $me->$rename_category(@_));
 }
 alias follow_suggestions => 'user_suggestions';
 
@@ -649,10 +649,10 @@ L<https://developer.x.com/en/docs/accounts-and-users/follow-search-get-users/api
 =cut
 
 sub user_suggestions_for {
-    my $self = shift;
+    my $me = shift;
 
-    $self->request_with_pos_args(slug => get => 'users/suggestions/:slug',
-        $self->$rename_category(@_));
+    $me->request_with_pos_args(slug => get => 'users/suggestions/:slug',
+        $me->$rename_category(@_));
 }
 alias follow_suggestions_for => 'user_suggestions_for';
 
@@ -778,12 +778,12 @@ L<https://developer.x.com/en/docs/media/upload-media/api-reference/post-media-me
 # E.g.:
 # create_media_metadata({ media_id => $id, alt_text => { text => $text } })
 sub create_media_metadata {
-    my ( $self, $to_json ) = @_;
+    my ( $me, $to_json ) = @_;
 
     croak 'expected a single hashref argument'
         unless @_ == 2 && is_hashref($_[1]);
 
-    $self->request(post => 'media/metadata/create', {
+    $me->request(post => 'media/metadata/create', {
         -to_json => $to_json,
     });
 }
@@ -818,10 +818,10 @@ L<https://developer.x.com/en/docs/tweets/curate-a-collection/api-reference/post-
 =cut
 
 sub curate_collection {
-    my ( $self, $to_json ) = @_;
+    my ( $me, $to_json ) = @_;
 
     croak 'unexpected extra args' if @_ > 2;
-    $self->request(post => 'collections/entries/curate', {
+    $me->request(post => 'collections/entries/curate', {
         -to_json => $to_json,
     });
 }
@@ -1045,13 +1045,13 @@ L<https://developer.x.com/en/docs/tweets/post-and-engage/api-reference/post-stat
 =cut
 
 sub update {
-    my $self = shift;
+    my $me = shift;
 
     my ( $http_method, $path, $args, @rest ) =
-        $self->normalize_pos_args(status => post => 'statuses/update', @_);
+        $me->normalize_pos_args(status => post => 'statuses/update', @_);
 
-    $self->flatten_list_args(media_ids => $args);
-    return $self->request($http_method, $path, $args, @rest);
+    $me->flatten_list_args(media_ids => $args);
+    return $me->request($http_method, $path, $args, @rest);
 }
 
 =method update_account_settings([ \%args ])
@@ -1143,7 +1143,7 @@ L<https://developer.x.com/en/docs/media/upload-media/api-reference/post-media-up
 =cut
 
 sub upload_media {
-    my $self = shift;
+    my $me = shift;
 
     # Used to require media. Now requires media *or* media_data.
     # Handle either as a positional parameter, like we do with
@@ -1158,9 +1158,9 @@ sub upload_media {
 
     my $args = shift;
     $args->{-multipart_form_data} = 1;
-    $self->flatten_list_args(additional_owners => $args);
+    $me->flatten_list_args(additional_owners => $args);
 
-    $self->request(post => $self->upload_url_for('media/upload'), $args, @_);
+    $me->request(post => $me->upload_url_for('media/upload'), $args, @_);
 }
 alias upload => 'upload_media';
 
@@ -1221,7 +1221,7 @@ L<https://developer.x.com/en/docs/direct-messages/sending-and-receiving/api-refe
 =cut
 
 sub new_direct_messages_event {
-    my $self = shift;
+    my $me = shift;
 
     # The first argument is either an event hashref, or we'll create one with
     # the first two arguments: text and recipient_id.
@@ -1238,7 +1238,7 @@ sub new_direct_messages_event {
     my $args = shift // {};
 
 
-    $self->request(post => 'direct_messages/events/new', {
+    $me->request(post => 'direct_messages/events/new', {
         -to_json => { event => $event }, %$args
     });
 }
@@ -1273,7 +1273,7 @@ L<https://developer.x.com/en/docs/basics/authentication/api-reference/invalidate
 # any conflict.
 
 sub invalidate_access_token {
-    my ( $self, $args ) = @_;
+    my ( $me, $args ) = @_;
 
     $args //= {};
 
@@ -1284,16 +1284,16 @@ sub invalidate_access_token {
     # Or, allow passing access_token/access_token secrets parameters as
     # specified in X's API documentation.
 
-    my $access_token = $$args{'-token'} // $self->access_token
+    my $access_token = $$args{'-token'} // $me->access_token
         // ( $$args{'-token'} = delete $$args{access_token} )
         // croak 'requires an oauth token';
 
     my $access_token_secret = $$args{'-token_secret'}
-        // $self->access_token_secret
+        // $me->access_token_secret
         // ( $$args{'-token_secret'} = delete $$args{access_token_secret} )
         // croak 'requires an oauth token secret';
 
-    return $self->request(post => 'oauth/invalidate_token', {
+    return $me->request(post => 'oauth/invalidate_token', {
         access_token        => $access_token,
         access_token_secret => $access_token_secret,
         %$args
