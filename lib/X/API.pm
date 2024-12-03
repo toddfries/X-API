@@ -145,6 +145,9 @@ sub request {
     $me->prepare_request($c);
     $me->add_authorization($c);
 
+    # save last known context incase an error is thrown
+    $me->{_last_context} = $c;
+
     # Allow early exit for things like X::API::AnyEvent
     $c->set_http_response($me->send_request($c) // return $c);
 
