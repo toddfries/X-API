@@ -1,5 +1,9 @@
-Twitter-API
+X-API
 ===========
+This is a fork of the Twitter::API module that was unceremoneously abandoned by its author when X chose to lock many free api bits behind a paywall in order to combat bot abuse.
+
+Since then, many but not all API calls have benn given free tier access, with very limited frequency of use. I see this as enough to test until paid tier access is profitable.
+
 [![Build Status](https://travis-ci.org/semifor/Twitter-API.svg?branch=master)](https://travis-ci.org/semifor/Twitter-API)
 [![CPAN](https://img.shields.io/cpan/v/Twitter-API.svg)](https://metacpan.org/pod/Twitter::API)
 
