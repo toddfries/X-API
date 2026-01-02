@@ -12,7 +12,7 @@ Second change was a beta program with per api call charges, very low, like per h
 
 Third change was a release of a playground go program that simulates the X API in its entirety, so code can be used to test against it with or without limits (it permits you to turn them on and off to ensure your code can handle limits).
 
-Try it out: [X Playground](https://github.com/xdevelopment/playground)
+Try it out: [X Playground](https://github.com/xdevplatform/playground)
 
 [![Build Status](https://travis-ci.org/semifor/Twitter-API.svg?branch=master)](https://travis-ci.org/semifor/Twitter-API)
 [![CPAN](https://img.shields.io/cpan/v/Twitter-API.svg)](https://metacpan.org/pod/Twitter::API)
