@@ -1,12 +1,21 @@
 X-API
 ===========
-This is a fork of the Twitter::API module that was unceremoniously abandoned by its author when X chose to lock many free api bits behind a paywall in order to combat bot abuse.
+This is a fork of the Twitter::API module that was unceremoniously abandoned by its author when X chose to abandon the Twitter third-party developer community.
 
-Since then, many but not all API calls have benn given free tier access, with very limited frequency of use. I see this as enough to test until paid tier access is profitable.
+The reason given was to combat bot abuse, but the heavy hand effected many businesses relying on third-party access.
+
+Since then, a series of changes has been gradually better, but nowhere near what it was.
+
+First change was many but not all API calls have benn given free tier access, with very limited frequency of use.  Testing can continue, but not in earnest.
+
+Second change was a beta program with per api call charges, very low, like per hour compute in aws, this scales well to low level testing as well as higher use caes, pay as you use essentially.
+
+Third change was a release of a playground go program that simulates the X API in its entirety, so code can be used to test against it with or without limits (it permits you to turn them on and off to ensure your code can handle limits).
+
+Try it out: [X Playground](https://github.com/xdevelopment/playground)
 
 [![Build Status](https://travis-ci.org/semifor/Twitter-API.svg?branch=master)](https://travis-ci.org/semifor/Twitter-API)
 [![CPAN](https://img.shields.io/cpan/v/Twitter-API.svg)](https://metacpan.org/pod/Twitter::API)
-
 
 This is a rewrite of [Net::Twitter][1] and [Net::Twitter::Lite][2]. If it works out, I'll deprecate those modules in favor of this one.
 
