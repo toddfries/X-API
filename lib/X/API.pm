@@ -50,7 +50,7 @@ after clear_access_token => sub {
 };
 
 has api_url => (
-    is      => 'ro',
+    is      => 'rw',
     default => sub { 'https://api.x.com' },
 );
 
